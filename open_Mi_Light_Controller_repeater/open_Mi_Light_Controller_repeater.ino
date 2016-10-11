@@ -1,5 +1,8 @@
 #define MY_DEBUG 
 #define MY_RADIO_NRF24
+#define MY_NODE_ID 100
+#define mi_command_repeat 30   //# of times to resend the command to bulb
+
 #define MY_REPEATER_FEATURE
 #include <MyConfig.h>
 #include <MySensors.h>
@@ -15,8 +18,6 @@
 #include "MiLightRadio.h"
 
 
-#define NODE_ID 100
-#define mi_command_repeat 30   //# of times to resend the command to bulb
 
 
 
@@ -39,6 +40,7 @@ void presentation()
 {  
   //Send the sensor node sketch version information to the gateway
   sendSketchInfo("Milight controller", "1.0");
+  delay(500);
 }
 
 void setup()
@@ -50,9 +52,10 @@ void setup()
 
   //Send the sensor node sketch version information to the gateway
   present(0, S_LIGHT);
+  delay(500);
   present(1, S_CUSTOM);
 
-
+delay(500);
 
 }
 
@@ -88,7 +91,7 @@ void receive(const MyMessage &message) {
 
   if (message.type == V_VAR1)
   {
-    // Serial.println("triggered V_VAR1");
+    Serial.println("triggered V_VAR1");
     
     incomingCommand = (char *)message.getCustom();
     Serial.println((char *)message.getCustom());
@@ -99,7 +102,6 @@ void receive(const MyMessage &message) {
       Serial.println(outgoingPacket[i]);
       }
     Serial.println("#############");
-    Serial.write(outgoingPacket, 7);
     sendCommand(outgoingPacket, sizeof(outgoingPacket));
     _begin();
   }
